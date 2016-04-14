@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>LD35 &middot; FloatingGhost</title>
+  </head>
+
+  <body>
+    <h1>Some Loodoom Daray or something 35</h1>
+  </body>
+
+  <div id="game"></div>
+
+  <script type="text/javascript" src="js/lib/phaser.min.js"></script>
+  <script type="text/javascript" src="js/states/menu.js"></script>
+  
+  <script type="text/javascript">
+    console.log("Starting...")
+    var game = new Phaser.Game(640, 480, Phaser.AUTO, "game");
+    game.state.add("Menu", Menu, true);
+  </script>
+
+</html>
