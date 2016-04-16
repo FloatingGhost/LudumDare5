@@ -8,27 +8,32 @@ MonsterCreator.prototype = {
   },
 
   preload: function() {
-    game.load.image("creator_bg", "res/img/bg/Creator.png");
+    game.load.spritesheet("creator", "res/img/bg/Creator-sheet.png",640,480);
     game.load.image("monster_base", "res/img/monsterparts/Monster_Base.png");
+    game.load.image("scare_button", "res/img/buttons/BeginScaring.png");
     for (i in monster_data) {
       console.log("Loading sprites for " + i); 
       i = monster_data[i];
       for (var j = 0; j < i.length; j++) {
         obj = i[j];
         console.log("Loading sprite " + obj["name"]);
-        game.load.image(obj["name"], "res/img/monsterparts/"+obj["img"]);
+        game.load.spritesheet(obj["name"], "res/img/monsterparts/"+obj["img"], 
+                              obj["size"]["x"], obj["size"]["y"]);
       }                      
     }
   },
-    
+  
   setupDisplay: function() {
     //Setup visuals
     console.log("Entering monster creator...");
-    game.add.sprite(0,0,"creator_bg");
-    this.base = game.add.sprite(300, 200, "monster_base");
+    var bg = game.add.sprite(0,0,"creator");
+    bg.animations.add("fizz");
+    bg.animations.play("fizz", 8, true);
+    this.base = game.add.sprite(270, 250, "monster_base");
     game.physics.arcade.enable(this.base)
     this.parts = game.add.group();
-    this.lastDragged = null;
+    this.lastDragged = null;i
+    game.add.button(game.world.centerX-50, 430, "scare_button", this.saveMonster, this,2,1,0);
     var x = 200;
     var y = 200;
     for (i in monster_data) {
@@ -39,6 +44,10 @@ MonsterCreator.prototype = {
         console.log("Adding to canvas: "+j["name"]);
         this.createpart(x,y,obj["name"], this.parts, obj["stats"]);
         y += 50;
+        if (y > 430){
+          y = 200;
+          x += 50;  
+        }
       }
     }
   },
@@ -103,15 +112,21 @@ MonsterCreator.prototype = {
   assignLastDragged: function(sprite, pointer) {
     this.lastDragged = sprite;
   },
+    
+  playanim: function(sprite, pointer) {
+     sprite.animations.play("anim", 5, true);
+  },
 
   createpart: function(x, y, sprite, grp, stats) {
     p = grp.create(x,y,sprite);
     p.inputEnabled = true;
     p.input.enableDrag(true);
     p.events.onDragStop.add(this.assignLastDragged, this);
+    p.events.onDragStart.add(this.playanim, this);
     game.physics.arcade.enable(p);
     p.stats = stats;
     p.name = sprite;
+    p.animations.add("anim");
   },
 
 
