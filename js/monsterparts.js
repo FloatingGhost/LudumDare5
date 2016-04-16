@@ -1,3 +1,5 @@
+var stat_names = ["crazed", "slimy"];
+
 var monster_data = {
             eyes: [
                     {

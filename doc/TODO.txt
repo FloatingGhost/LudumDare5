@@ -4,7 +4,7 @@ TODO
 
 TASK                      | Deadline               | Priority (1-5, 1 max)
 
-Design monstercreator     | ASAP                   | 1
+Design monstercreator     | ASAP - DONE            | 1
 Create tutorial           | Sunday 6pm             | 4
 Design intel mechanic     | Saturday 12pm          | 2
 Create scare screen       | Sunday 12pm            | 3

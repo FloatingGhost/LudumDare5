@@ -79,9 +79,14 @@ MonsterCreator.prototype = {
       used[i].x -= this.base.x;
       used[i].y -= this.base.y;
     }
-    console.log(used.length + " sprites used.");
-    game.monsterParts = used; 
+    game.monsterParts = used;
+    game.monsterParts.stats = {"memes": 5}; 
+    for (i in stat_names) {
+      var obj = stat_names[i];
+      game.monsterParts.stats[obj] = this.getStat(obj);
+    }
     game.state.start("ScareScreen");
+    
   },
 
   getUsed: function() {
@@ -112,8 +117,12 @@ MonsterCreator.prototype = {
 
   update: function() {
     game.debug.text("Monster values: ", 0, 50);
-    game.debug.text("Crazed: "+this.getStat("crazed"), 0, 70);
-    game.debug.text("Slimy: "+this.getStat("slimy"), 0, 80);
+    y = 70;
+    for (i in stat_names) {
+      i = stat_names[i];
+      game.debug.text(i+": "+this.getStat(i), 0, y);
+      y += 15;
+    };
   },
 
 
