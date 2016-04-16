@@ -8,9 +8,12 @@ ScareScreen.prototype = {
     game.load.image("scare_bg", "res/img/bg/Scare_BG.png");
     game.load.image("monster_base", "res/img/monsterparts/Monster_Base.png");
     game.load.image("sleeping_child", "res/img/Sleeping-child.png");
+    game.load.audio("roar", "res/snd/roar.wav");
+    game.load.spritesheet("roarword", "res/img/fx/roar.png", 64,64);
   },
 
   create: function() {
+    this.roar = game.add.audio("roar");
     game.add.sprite(0,0,"scare_bg");
     this.monster = game.add.group();
     var base = this.monster.create(0, 72, "monster_base");
@@ -54,6 +57,15 @@ ScareScreen.prototype = {
   },
 
   scareChild: function() {
+    var x =game.add.sprite(this.monster.x, this.monster.y, "roarword");
+    x.animations.add("wew");
+    x.animations.play("wew", 8);
+    var x =game.add.sprite(this.monster.x+140, this.monster.y, "roarword");
+    
+    x.animations.add("wew");
+    x.rotation += 3.14/2
+    x.animations.play("wew", 8);
+    this.roar.play();
     console.log("argh!");
     y = 50;
     var total = {};
