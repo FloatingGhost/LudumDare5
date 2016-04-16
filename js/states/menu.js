@@ -1,10 +1,26 @@
 var Menu = function() {};
 Menu.prototype = {
   
-  init: function() {},
+  init: function() {
+  
+  },
 
-  create: function() {},
+  start_game: function() {
+    game.state.start("IntroScreen"); 
+  },
+  preload: function() {
+    game.load.image("title_bg", "res/img/TitleScreen.png");
+    game.load.image("start_button", "res/img/buttons/StartGame.png");
+  },
 
-  update: function() {}
+  create: function() {
+    game.add.sprite(0,0,"title_bg");
+    game.add.button(200, 200, "start_button", this.start_game, this, 2, 1, 0);
+  },
+
+  update: function() {
+  
+  },
+
 
 };

@@ -11,10 +11,13 @@
 
   <script type="text/javascript" src="js/lib/phaser.min.js"></script>
   <script type="text/javascript" src="js/states/menu.js"></script>
-  
+  <script type="text/javascript" src="js/states/introscreen.js"></script>
+  <script type="text/javascript" src="js/states/monstercreator.js"></script>  
   <script type="text/javascript">
     console.log("Starting...")
     var game = new Phaser.Game(640, 480, Phaser.AUTO, "game");
+    game.state.add("IntroScreen", IntroScreen);
+    game.state.add("MonsterCreator", MonsterCreator);
     game.state.add("Menu", Menu, true);
   </script>
 

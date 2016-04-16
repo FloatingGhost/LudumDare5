@@ -1,0 +1,22 @@
+GAME FLOW
+=========
+
+
+Normal flow
+
+  Menu 
+  Intro
+  Tutorial
+    Intel
+    Create 
+    Scare
+    Result
+  LetLoose
+  
+  * 
+    Intel
+    Create
+    Scare
+    Result 
+    GOTO *
+ 
