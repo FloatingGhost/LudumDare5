@@ -16,11 +16,22 @@ ScareScreen.prototype = {
     this.monster = game.add.group();
     var base = this.monster.create(0, 72, "monster_base");
     for (i in game.monsterParts) {
+      console.log("Reloading " + game.monsterParts[i].name);
+      
       obj = game.monsterParts[i];
-      obj.x += base.x;
-      obj.y += base.y;
-      this.monster.create(obj.x, obj.y, obj.name);
+      
+      if (obj.name != null) {
+        obj.x += base.x;
+        obj.y += base.y;
+       
+        console.log(obj);
+        var wew = this.monster.add(obj);
+        console.log("Adding animations...");
+        wew.anchor = {x:0.5, y:0.5};
+        wew.rotation = obj.rotation;  
+        console.log("Added!"); 
     }
+   }
     
     var child = game.add.sprite(230, 330, "sleeping_child");
     child.scale.x = 2;  

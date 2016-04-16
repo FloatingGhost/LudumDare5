@@ -23,7 +23,7 @@ IntelScreen.prototype = {
 
   format: function(child) {
     string = ""
-    string += child["name"] + ", " + child["age"] + "\n";
+    string += child["name"] + ", " + child["age"] + " years old\n";
     for (i in child["evidence"]) {
       string += child["evidence"][i] + "\n\n";
     }

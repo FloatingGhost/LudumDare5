@@ -8,7 +8,12 @@ children = [
    ],
    modifiers: {
     slimy: 2,
-    crazed: 0.5,
+    crazed: 0.1,
+    hairy: 0,
+    spikey: 0, 
+    scaly: 1.2,
+    smelly: 1,
+    existential: 0.2,
    },
   }
 ];

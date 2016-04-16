@@ -11,6 +11,7 @@ MonsterCreator.prototype = {
     game.load.spritesheet("creator", "res/img/bg/Creator-sheet.png",640,480);
     game.load.image("monster_base", "res/img/monsterparts/Monster_Base.png");
     game.load.image("scare_button", "res/img/buttons/BeginScaring.png");
+    
     for (i in monster_data) {
       console.log("Loading sprites for " + i); 
       i = monster_data[i];
@@ -29,7 +30,7 @@ MonsterCreator.prototype = {
     var bg = game.add.sprite(0,0,"creator");
     bg.animations.add("fizz");
     bg.animations.play("fizz", 8, true);
-    this.base = game.add.sprite(270, 250, "monster_base");
+    this.base = game.add.sprite(200, 150, "monster_base");
     game.physics.arcade.enable(this.base)
     this.parts = game.add.group();
     this.lastDragged = null;i
@@ -42,7 +43,14 @@ MonsterCreator.prototype = {
       for (var j = 0; j < i.length; j++) {
         obj = i[j];
         console.log("Adding to canvas: "+j["name"]);
-        this.createpart(x,y,obj["name"], this.parts, obj["stats"]);
+        var p =this.createpart(x,y,obj["name"], this.parts, obj["stats"], true);
+        console.log("Adding tooltip "+obj["desc"])
+        p.tooltip = new Phasetips(game, {
+        targetObject: p,
+        context: obj["desc"],
+        strokeColor: 0xff0000, // red stroke
+        position: "right" // where we want the tooltip to appear
+        });
         y += 50;
         if (y > 430){
           y = 200;
@@ -61,6 +69,58 @@ MonsterCreator.prototype = {
     layerup.onDown.add(this.moveSpriteUpLayer, this);
     var cont = game.input.keyboard.addKey(Phaser.KeyCode.ENTER);
     cont.onDown.add(this.saveMonster, this);
+    var rot_left = game.input.keyboard.addKey(Phaser.KeyCode.Q);
+    rot_left.onDown.add(this.rot_left, this);
+    var rot_right = game.input.keyboard.addKey(Phaser.KeyCode.E);
+    rot_right.onDown.add(this.rot_right, this);
+    var clone = game.input.keyboard.addKey(Phaser.KeyCode.C);
+    clone.onDown.add(this.clone, this);
+    var del = game.input.keyboard.addKey(Phaser.KeyCode.D);
+    del.onDown.add(this.del, this);
+    var scaleup = game.input.keyboard.addKey(Phaser.KeyCode.W);
+    scaleup.onDown.add(this.scaleup, this);
+    var scaledown = game.input.keyboard.addKey(Phaser.KeyCode.S);
+    scaledown.onDown.add(this.scaledown, this);
+    var fliphoriz = game.input.keyboard.addKey(Phaser.KeyCode.R);
+    fliphoriz.onDown.add(this.fliphoriz, this);
+    var flipverti = game.input.keyboard.addKey(Phaser.KeyCode.F);
+    flipverti.onDown.add(this.flipverti, this);
+  },
+
+  fliphoriz: function() {
+    this.lastDragged.scale.x *= -1;
+  },
+
+  flipverti: function() {
+    this.lastDragged.scale.y *= -1;
+
+  },
+
+  scaleup: function() {
+    this.lastDragged.scale.x += 0.1;
+    this.lastDragged.scale.y += 0.1;
+  },
+
+  scaledown: function() {
+    this.lastDragged.scale.x -= 0.1;
+    this.lastDragged.scale.y -= 0.1;
+  },
+
+  rot_left: function() {
+    this.lastDragged.rotation -= 0.2;
+  },
+
+  rot_right: function() {
+    this.lastDragged.rotation += 0.2;
+  },
+
+  clone: function() {
+    var obj = this.lastDragged;
+    this.createpart(obj.x, obj.y-16, obj.name, this.parts, obj.stats); 
+  },
+
+  del: function() {
+    
   },
 
   getStat: function(key) {
@@ -94,6 +154,7 @@ MonsterCreator.prototype = {
       var obj = stat_names[i];
       game.monsterParts.stats[obj] = this.getStat(obj);
     }
+    this.parts.removeAll();
     game.state.start("ScareScreen");
     
   },
@@ -111,13 +172,15 @@ MonsterCreator.prototype = {
 
   assignLastDragged: function(sprite, pointer) {
     this.lastDragged = sprite;
+    sprite.tooltip.x = sprite.x + 50;
+    sprite.tooltip.y = sprite.y;
   },
     
   playanim: function(sprite, pointer) {
      sprite.animations.play("anim", 5, true);
   },
 
-  createpart: function(x, y, sprite, grp, stats) {
+  createpart: function(x, y, sprite, grp, stats, canDelete) {
     p = grp.create(x,y,sprite);
     p.inputEnabled = true;
     p.input.enableDrag(true);
@@ -127,6 +190,14 @@ MonsterCreator.prototype = {
     p.stats = stats;
     p.name = sprite;
     p.animations.add("anim");
+    if (canDelete) {
+      p.canDelete = false
+    } else {
+      p.canDelete = true;
+    }
+    p.anchor = {x:0.5, y:0.5};
+    return p
+
   },
 
 

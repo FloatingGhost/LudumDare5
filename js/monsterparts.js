@@ -1,4 +1,4 @@
-var stat_names = ["crazed", "slimy"];
+var stat_names = ["crazed", "slimy", "hairy", "spikey", "scaly", "smelly", "existential"];
 
 var monster_data = {
             eyes: [
@@ -10,6 +10,11 @@ var monster_data = {
                       stats: {
                         crazed: 30,
                         slimy: 10,
+                        hairy: 5,
+                        spikey: 10,
+                        scaly: 10,
+                        smelly: 5,
+                        existential: 0,
                       },
                     },
                     { name: "Reptile Eyes",
@@ -19,6 +24,11 @@ var monster_data = {
                       stats: {
                         crazed: 20,
                         slimy: 20,
+                        hairy: 0,
+                        spikey: 5,
+                        scaly: 20,
+                        smelly: 5,
+                        existential: 0,
                       },
                     },
                     { name: "Void Eyes",
@@ -26,8 +36,13 @@ var monster_data = {
                       desc: "Stare into the endless void",
                       img: "eyes/VoidEye.png",
                       stats: {
-                        crazed: 10,
+                        crazed: 0,
                         slimy: 0,
+                        hairy: 0,
+                        spikey: 0,
+                        scaly: 0,
+                        smelly: 0,
+                        existential: 100,
                       },
                     },
                   ],
@@ -41,6 +56,11 @@ var monster_data = {
                         stats: {
                           crazed: 50,
                           slimy: 3,
+                          hairy: 2,
+                          spikey: 10,
+                          scaly: 5,
+                          smelly: 5,
+                          existential: 0,
                         },
                       },
                       { name: "Spinning Mouth",
@@ -50,6 +70,11 @@ var monster_data = {
                         stats: {
                           crazed: 100,
                           slimy: 0,
+                          hairy: 0,
+                          spikey: 100,
+                          scaly: 0,
+                          smelly: 0,
+                          existential: 10,
                         },
                       },
                       { name: "Void Mouth", 
@@ -57,10 +82,32 @@ var monster_data = {
                         desc: "Fall into the void...",
                         img: "mouths/Void_Mouth.png",
                         stats: {
-                          crazed: 30,
-                          slimy: 10,
+                          crazed: 0,
+                          slimy: 0,
+                          hairy: 0,
+                          spikey: 0,
+                          scaly: 0,
+                          smelly: 0,
+                          existential: 50,
                         },
                       },
                     ],
+            legs: [
+                    {
+                      name: "Hairy Leg",
+                      desc: "Hairy as a hobbit",
+                      size: {x:64, y:64},
+                      img: "limbs/Green-leg.png",
+                      stats: {
+                        crazed: 10,
+                        slimy: 0,
+                        hairy: 50,
+                        spikey: 0,
+                        scaly: 0,
+                        smelly: 15,
+                        existential: 0,
+                      },
+                    },
+                  ],
           };
         
