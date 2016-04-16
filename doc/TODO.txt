@@ -5,7 +5,6 @@ TODO
 TASK                      | Deadline               | Priority (1-5, 1 max)
 
 Create tutorial           | Sunday 6pm             | 4
-Design intel mechanic     | Saturday 12pm          | 2
 Create scare screen       | Sunday 12pm            | 3
 Create artwork            | ONGOING                | 3
 Fix all the buggy crap    | Monday 2am             | (variable)

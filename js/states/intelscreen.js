@@ -9,9 +9,13 @@ IntelScreen.prototype = {
     game.load.spritesheet("desk", "res/img/desk.png", 640, 480);
     game.load.image("folder", "res/img/folder.png");
     game.load.image("grey", "res/img/bg/Grey_Mark.png");
+    game.load.audio("fdrup", "res/snd/folder-up.ogg");
+    game.load.audio("fdrdwn", "res/snd/folder-down.ogg");
   },
 
   create: function() {
+    this.fdrup = game.add.audio("fdrup");
+    this.fdrdwn = game.add.audio("fdrdwn");
     var memes = game.add.sprite(0,0,"desk");
     memes.animations.add("flicker");
     memes.animations.play("flicker", 10, true);
@@ -39,6 +43,7 @@ IntelScreen.prototype = {
 
   openfolder: function(sprite) {
     if (!this.folderOpen) {
+      this.fdrup.play();
       for (i in this.folders.children) {
         child = this.folders.children[i];
         if (child != sprite)
@@ -51,6 +56,7 @@ IntelScreen.prototype = {
       game.add.tween(this.grey).to({alpha:1}, 600, null, true);
       game.add.tween(this.curtex).to({alpha:1}, 650, null, true);
     } else {
+      this.fdrdwn.play();
       this.arrangeFolders();
       game.add.tween(this.curtex).to({alpha:0}, 350, null, true);
       game.add.tween(this.grey).to({alpha:0}, 400, null, true);
