@@ -14,11 +14,13 @@
   <script type="text/javascript" src="js/states/introscreen.js"></script>
   <script type="text/javascript" src="js/states/monstercreator.js"></script>  
   <script type="text/javascript" src="js/monsterparts.js"></script>
+  <script type="text/javascript" src="js/states/scarescreen.js"></script>
   <script type="text/javascript">
     console.log("Starting...")
     var game = new Phaser.Game(640, 480, Phaser.AUTO, "game");
     game.state.add("IntroScreen", IntroScreen);
     game.state.add("MonsterCreator", MonsterCreator);
+    game.state.add("ScareScreen", ScareScreen);
     game.state.add("Menu", Menu, true);
   </script>
 

@@ -72,9 +72,16 @@ MonsterCreator.prototype = {
   },
 
   saveMonster: function() {
+    
     console.log("Saving...");
     var used = this.getUsed();
+    for (i in used) {
+      used[i].x -= this.base.x;
+      used[i].y -= this.base.y;
+    }
     console.log(used.length + " sprites used.");
+    game.monsterParts = used; 
+    game.state.start("ScareScreen");
   },
 
   getUsed: function() {
@@ -99,6 +106,7 @@ MonsterCreator.prototype = {
     p.events.onDragStop.add(this.assignLastDragged, this);
     game.physics.arcade.enable(p);
     p.stats = stats;
+    p.name = sprite;
   },
 
 
