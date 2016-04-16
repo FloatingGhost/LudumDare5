@@ -13,6 +13,7 @@ MonsterCreator.prototype = {
     game.load.image("scare_button", "res/img/buttons/scareflower.png");
     game.load.spritesheet("lightning", "res/img/fx/Lightning.png",60,170);
     game.load.image("backing", "res/img/buttons/backing.png");  
+    game.load.audio("spawn", "res/snd/item_spawn.wav");
     for (i in monster_data) {
       console.log("Loading sprites for " + i); 
       i = monster_data[i];
@@ -40,12 +41,12 @@ MonsterCreator.prototype = {
     this.base = game.add.sprite(200, 150, "monster_base");
     game.physics.arcade.enable(this.base)
     this.parts = game.add.group();
+    this.spawnSound = game.add.audio("spawn");
     this.lastDragged = null;
     game.add.button(game.world.centerX-50, 430, "scare_button", this.saveMonster, this,2,1,0);
     var x = 100;
     var y = 10;
     for (i in monster_data) {
-      console.log("Adding " + i + " to canvas");
       i = monster_data[i];
       for (var j = 0; j < i.length; j++) {
         obj = i[j];
@@ -55,9 +56,33 @@ MonsterCreator.prototype = {
         p.width=32;
         p.height=32;
         x += 50;
-        
+        new Phasetips(game, {
+          targetObject: p,
+          context: this.getDesc(p.magicmushrooms),
+          strokeColor: 0xff0000
+        });  
       }
     }
+  },
+
+  getDesc: function(obj) {
+    var text = obj["name"] + "\n";
+    text += obj["desc"];
+    /*try{
+      for (i in stat_names) {
+        var x  = obj.stats[stat_names[i]];
+        switch (x) {
+          case (x > 10):
+            text += "\nVery "+stat_names[i]; 
+            break;  
+          default:
+            break;
+        }
+      }
+    } catch (e) {
+
+    }*/
+    return text;
   },
 
   spawn: function(obj) {
@@ -69,7 +94,8 @@ MonsterCreator.prototype = {
 
   actuallySpawnThisTime: function() {
     var obj = this.mehmetmyson;
-    console.log("Spawning "+obj.start) 
+    console.log("Spawning "+obj.start);
+    this.spawnSound.play();
     this.createpart(500, 430, obj["key"], this.parts, obj.magicmushrooms["stats"]);
   },
 

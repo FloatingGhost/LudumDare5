@@ -15,7 +15,7 @@ Menu.prototype = {
 
   create: function() {
     game.add.sprite(0,0,"title_bg");
-    game.add.button(200, 200, "start_button", this.start_game, this, 2, 1, 0);
+    game.add.button(450, 350, "start_button", this.start_game, this, 2, 1, 0);
   },
 
   update: function() {
