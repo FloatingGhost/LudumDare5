@@ -10,7 +10,7 @@ MonsterCreator.prototype = {
   preload: function() {
     game.load.spritesheet("creator", "res/img/bg/Creator-sheet.png",640,480);
     game.load.image("monster_base", "res/img/monsterparts/Monster_Base.png");
-    game.load.image("scare_button", "res/img/buttons/BeginScaring.png");
+    game.load.image("scare_button", "res/img/buttons/scareflower.png");
     
     for (i in monster_data) {
       console.log("Loading sprites for " + i); 
