@@ -11,7 +11,8 @@ MonsterCreator.prototype = {
     game.load.spritesheet("creator", "res/img/bg/Creator-sheet.png",640,480);
     game.load.image("monster_base", "res/img/monsterparts/Monster_Base.png");
     game.load.image("scare_button", "res/img/buttons/scareflower.png");
-    
+    game.load.spritesheet("lightning", "res/img/fx/Lightning.png",60,170);
+    game.load.image("backing", "res/img/buttons/backing.png");  
     for (i in monster_data) {
       console.log("Loading sprites for " + i); 
       i = monster_data[i];
@@ -30,34 +31,46 @@ MonsterCreator.prototype = {
     var bg = game.add.sprite(0,0,"creator");
     bg.animations.add("fizz");
     bg.animations.play("fizz", 8, true);
+    this.lightning = game.add.sprite(500, 200, "lightning");
+    this.lightning.alpha = 0;
+    this.lightning.scale={x:1.5, y:1.5};
+    var amil = this.lightning.animations.add("pew");
+    amil.onComplete.add(this.actuallySpawnThisTime, this);
+    this.mehmetmyson = null;
     this.base = game.add.sprite(200, 150, "monster_base");
     game.physics.arcade.enable(this.base)
     this.parts = game.add.group();
-    this.lastDragged = null;i
+    this.lastDragged = null;
     game.add.button(game.world.centerX-50, 430, "scare_button", this.saveMonster, this,2,1,0);
-    var x = 200;
-    var y = 200;
+    var x = 100;
+    var y = 10;
     for (i in monster_data) {
       console.log("Adding " + i + " to canvas");
       i = monster_data[i];
       for (var j = 0; j < i.length; j++) {
         obj = i[j];
-        console.log("Adding to canvas: "+j["name"]);
-        var p =this.createpart(x,y,obj["name"], this.parts, obj["stats"], true);
-        console.log("Adding tooltip "+obj["desc"])
-        p.tooltip = new Phasetips(game, {
-        targetObject: p,
-        context: obj["desc"],
-        strokeColor: 0xff0000, // red stroke
-        position: "right" // where we want the tooltip to appear
-        });
-        y += 50;
-        if (y > 430){
-          y = 200;
-          x += 50;  
-        }
+        game.add.sprite(x-4,y-4,"backing");
+        var p = game.add.button(x,y,obj["name"], this.spawn, this, 2, 1, 0);
+        p.magicmushrooms = obj;
+        p.width=32;
+        p.height=32;
+        x += 50;
+        
       }
     }
+  },
+
+  spawn: function(obj) {
+    console.log(obj);
+    this.lightning.alpha = 1;
+    this.lightning.animations.play("pew", 20);
+    this.mehmetmyson = obj;
+  },
+
+  actuallySpawnThisTime: function() {
+    var obj = this.mehmetmyson;
+    console.log("Spawning "+obj.start) 
+    this.createpart(500, 430, obj["key"], this.parts, obj.magicmushrooms["stats"]);
   },
 
   create: function() {
@@ -120,7 +133,7 @@ MonsterCreator.prototype = {
   },
 
   del: function() {
-    
+    this.lastDragged.kill(); 
   },
 
   getStat: function(key) {
@@ -144,17 +157,23 @@ MonsterCreator.prototype = {
     
     console.log("Saving...");
     var used = this.getUsed();
+    
     for (i in used) {
+      console.log("USED: " + used[i].name);
       used[i].x -= this.base.x;
       used[i].y -= this.base.y;
     }
-    game.monsterParts = used;
-    game.monsterParts.stats = {"memes": 5}; 
+    game.monsterParts = {"parts": used, stats: {}};
     for (i in stat_names) {
       var obj = stat_names[i];
       game.monsterParts.stats[obj] = this.getStat(obj);
     }
+    if (game.monsterParts.length == 1) {
+      game.monsterParts = [game.monsterParts, null];
+    }
     this.parts.removeAll();
+    console.log("PARTS: ")
+    console.log(game.monsterParts);
     game.state.start("ScareScreen");
     
   },
@@ -172,8 +191,6 @@ MonsterCreator.prototype = {
 
   assignLastDragged: function(sprite, pointer) {
     this.lastDragged = sprite;
-    sprite.tooltip.x = sprite.x + 50;
-    sprite.tooltip.y = sprite.y;
   },
     
   playanim: function(sprite, pointer) {
