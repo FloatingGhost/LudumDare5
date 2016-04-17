@@ -372,7 +372,7 @@ MonsterCreator.prototype = {
   },
     
   playanim: function(sprite, pointer) {
-     sprite.animations.play("anim", 5, true);
+     sprite.animations.play("anim", 10, true);
   },
 
   calcCost: function() {
