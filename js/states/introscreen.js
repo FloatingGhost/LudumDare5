@@ -19,7 +19,7 @@ IntroScreen.prototype = {
 
   startgame: function() {
     game.theme.stop();
-    game.state.start("IntelScreen");
+    game.state.start("TutorialScreen");
   },
 
   update: function() {

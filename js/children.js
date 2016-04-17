@@ -82,6 +82,7 @@ children = [
       crazed: 3,
       hairy: 0,
       spikey: 2,
+      scaly: 0.1,
       smelly: 0.5,
       existential: 0
     },
