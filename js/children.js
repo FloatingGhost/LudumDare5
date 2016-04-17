@@ -51,5 +51,39 @@ children = [
       existential: 0.1,
     },
 
-  }
+  },
+
+  {name: "Tristan",
+   age: 18,
+   evidence: [
+      "Tristan is not a fan of authors such as Nietzsche",
+      "He oftens spends time thinking about life in general",
+      "His body does nothing to cover up natural spikes",
+   ],
+   modifiers: {
+      slimy: 0.5,
+      crazed: 1,
+      hairy: 0,
+      spikey: 0,
+      scaly: 0,
+      smelly: 0.5,
+      existential: 4,
+   },
+   },
+
+   {name: "Jimbo",
+    age: 3,   
+    evidence: [
+      "Jimbo, or Jimmy Boy as his grandfather calls him,\nhates needles.",
+      "He watches 'World's greatest serial killers' late at night"
+    ],
+    modifiers: {
+      slimy: 0,
+      crazed: 3,
+      hairy: 0,
+      spikey: 2,
+      smelly: 0.5,
+      existential: 0
+    },
+    }
 ];

@@ -138,7 +138,7 @@ MonsterCreator.prototype = {
         o.alpha = (this.showingLegs)?0:1;
         o.input.priorityID = (this.showingLegs)?1:100
         o.z = 0;
-        o.tip.updatePosition(o.x+40, o.y-20)
+        o.tip.updatePosition(o.x-50, o.y+80)
         game.world.bringToTop(o);
 
       }
@@ -155,7 +155,7 @@ MonsterCreator.prototype = {
         o.alpha = (this.showingMisc)?0:1;
         o.input.priorityID = (this.showingMisc)?1:100
         o.z = 0;
-        o.tip.updatePosition(o.x+40, o.y-20)
+        o.tip.updatePosition(o.x-50, o.y+80)
         game.world.bringToTop(o);
 
       }
@@ -174,7 +174,7 @@ MonsterCreator.prototype = {
         o.z = 0;
         o.input.priorityID = (this.showingArms)?1:100
         game.world.bringToTop(o);
-        o.tip.updatePosition(o.x+40, o.y-20)
+        o.tip.updatePosition(o.x+20, o.y+80)
       }
     }
     this.showingArms=!this.showingArms;
@@ -191,7 +191,7 @@ MonsterCreator.prototype = {
         o.input.priorityID = (this.showingEyes)?1:100;
         o.z = 0;
         game.world.bringToTop(o);
-        o.tip.updatePosition(o.x+40, o.y-20)
+        o.tip.updatePosition(o.x-50, o.y+80)
       }
     }
     this.showingEyes =!this.showingEyes;
@@ -209,7 +209,7 @@ MonsterCreator.prototype = {
         o.z = 0;
         o.tip.positionOffset = 20;
         game.world.bringToTop(o);
-      o.tip.updatePosition(o.x+40, o.y-20)
+      o.tip.updatePosition(o.x-50, o.y+80)
       }
     }
     this.showingMouths =!this.showingMouths;
@@ -237,6 +237,7 @@ MonsterCreator.prototype = {
   getDesc: function(obj) {
     var text = obj["name"] + "\n";
     text += obj["desc"];
+    text += "\nCost: "+obj.cost;
     console.log("GETTING DESC FOR "+obj["name"])
     for (meme in stat_names) {
       var schtat = obj.stats[stat_names[meme]];
