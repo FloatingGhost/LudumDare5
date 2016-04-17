@@ -15,7 +15,7 @@ ScareScreen.prototype = {
     game.load.audio("creak", "res/snd/DoorCreak.wav");
     game.load.spritesheet("snore", "res/img/fx/snore.png", 50, 50);
     game.load.image("grey", "res/img/bg/Grey_Mark.png");
-
+    game.load.image("tryagain", "res/img/buttons/retry.png");
   },
 
   create: function() {
@@ -116,7 +116,7 @@ ScareScreen.prototype = {
   },
 
   statScore: function(name, stat, mod,x,y,i) {
-    var whitetext = { font: "30px Sans", fill: "#ffffff", align: "center"};
+    var whitetext = { font: "20px Sans", fill: "#ffffff", align: "center"};
     var tot = stat*mod;
     console.log(stat);
     var o = game.add.text(0,y,name.toUpperCase()+": "+stat + " X"+mod+" = "+ tot, whitetext);
@@ -138,15 +138,19 @@ ScareScreen.prototype = {
     for (i in stat_names) {
       var o = stat_names[i];
       this.statScore(stat_names[i], game.monsterParts.stats[o], game.child.modifiers[o],x,y,i);
-      y += 40;
+      y += 30;
     }
-    if (score > target) {
-      var textobj = game.add.text(x, y, "SUCCESS!", whitetext);
-      textobj.alpha = 0;
-      game.add.tween(textobj).to({alpha:1}, 1000+(500*(i+1))).start();  
-    }
-  },
+    var s = "Score: "+score+"\n"+"Target was: "+target+"\n"+((target>score)?"BETTER LUCK NEXT TIME...":"SUCCESS!");
+    var textobj = game.add.text(0, y, s, {font:"30px Sans", fill:"#ffffff"});
+    textobj.alpha = 0;
+    game.add.tween(textobj).to({alpha:1}, 1000).start(); 
  
+    var b = game.add.button(20, y+130, "tryagain", this.tryagain, this,2,1,0);
+    
+  },
+  tryagain: function() {
+    game.state.start("IntelScreen");
+  },
    update: function() {
    },
 
