@@ -8,6 +8,7 @@ MonsterCreator.prototype = {
   },
 
   preload: function() {
+    
     game.load.spritesheet("creator", "res/img/bg/Creator-sheet.png",640,480);
     game.load.image("monster_base", "res/img/monsterparts/Monster_Base.png");
     game.load.image("scare_button", "res/img/buttons/scareflower.png");
@@ -19,6 +20,7 @@ MonsterCreator.prototype = {
     game.load.image("legbutton", "res/img/buttons/legbutton.png");
     game.load.image("eyebutton", "res/img/buttons/eyebutton.png");
     game.load.image("mouthbutton", "res/img/buttons/mouthbutton.png");
+    game.load.image("miscbutton", "res/img/buttons/miscbutton.png");
     for (i in monster_data) {
       console.log("Loading sprites for " + i); 
       i = monster_data[i];
@@ -55,6 +57,7 @@ MonsterCreator.prototype = {
     this.showingLegs=false;
     this.showingArms=false;
     this.showingEyes=false;
+    this.showingMisc = false;
     this.showingMouths=false;
     this.spawnSprites = game.add.group();
     
@@ -79,6 +82,8 @@ MonsterCreator.prototype = {
         case "arms":
           game.add.button(x,y,"armbutton", this.showArms, this, 2, 1, 0);
           break;
+        case "misc":
+          game.add.button(x,y,"miscbutton", this.showMisc, this, 2, 1, 0);
         }
         y += 100; 
         kekkles += 1;
@@ -99,11 +104,13 @@ MonsterCreator.prototype = {
         p.height=32;
         p.alpha=0;        
         x += 64;
-        /*new Phasetips(game, {
+        p.context = this.getDesc(obj);
+        p.tip = new Phasetips(game, {
           targetObject: p,
-          context: this.getDesc(p.magicmushrooms),
-          strokeColor: 0xff0000
-        });*/  
+          context: p.context,
+          strokeColor: 0xff0000,
+          positionOffset: 1000,
+        });  
       }
       x += 64;
     }
@@ -131,12 +138,30 @@ MonsterCreator.prototype = {
         o.alpha = (this.showingLegs)?0:1;
         o.input.priorityID = (this.showingLegs)?1:100
         o.z = 0;
-
+        o.tip.updatePosition(o.x+40, o.y-20)
         game.world.bringToTop(o);
 
       }
     }
     this.showingLegs=!this.showingLegs;
+  },
+    
+  showMisc: function(obj) {
+    this.clearall(this.showingMisc);
+    for (i in this.spawnSprites.children) {
+      var o = this.spawnSprites.children[i];
+      if (o.magicmushrooms.cat == "misc") {
+        //o.backing.alpha = 1;
+        o.alpha = (this.showingMisc)?0:1;
+        o.input.priorityID = (this.showingMisc)?1:100
+        o.z = 0;
+        o.tip.updatePosition(o.x+40, o.y-20)
+        game.world.bringToTop(o);
+
+      }
+    }
+    this.showingMisc=!this.showingMisc;
+
   },
 
   showArms: function(obj) {
@@ -149,7 +174,7 @@ MonsterCreator.prototype = {
         o.z = 0;
         o.input.priorityID = (this.showingArms)?1:100
         game.world.bringToTop(o);
-
+        o.tip.updatePosition(o.x+40, o.y-20)
       }
     }
     this.showingArms=!this.showingArms;
@@ -166,6 +191,7 @@ MonsterCreator.prototype = {
         o.input.priorityID = (this.showingEyes)?1:100;
         o.z = 0;
         game.world.bringToTop(o);
+        o.tip.updatePosition(o.x+40, o.y-20)
       }
     }
     this.showingEyes =!this.showingEyes;
@@ -181,8 +207,9 @@ MonsterCreator.prototype = {
         o.alpha = (this.showingMouths)?0:1;
         o.input.priorityID = (this.showingMouths)?1:100;
         o.z = 0;
+        o.tip.positionOffset = 20;
         game.world.bringToTop(o);
-
+      o.tip.updatePosition(o.x+40, o.y-20)
       }
     }
     this.showingMouths =!this.showingMouths;
@@ -190,37 +217,38 @@ MonsterCreator.prototype = {
   },
 
   clearall: function(me) {
-    if (!me) {
+    if (1) {
       this.showingArms = false;
       this.showingEyes = false;
       this.showingLegs = false;
       this.showingMouths = false;
+      this.showingMisc = false;
       for (i in this.spawnSprites.children) {
         var o = this.spawnSprites.children[i];
         o.alpha = 0;
         o.input.priorityID = 1;
+        o.tip.updatePosition(o.x-1000, o.y-1000);
+        o.tip.positionOffset = 1000;
       }
-    
+      
     }
   },
 
   getDesc: function(obj) {
     var text = obj["name"] + "\n";
     text += obj["desc"];
-    /*try{
-      for (i in stat_names) {
-        var x  = obj.stats[stat_names[i]];
-        switch (x) {
-          case (x > 10):
-            text += "\nVery "+stat_names[i]; 
-            break;  
-          default:
-            break;
-        }
-      }
-    } catch (e) {
+    console.log("GETTING DESC FOR "+obj["name"])
+    for (meme in stat_names) {
+      var schtat = obj.stats[stat_names[meme]];
+      var kek = stat_names[meme];
+      if (kek == "existential")
+        kek = "existentially troubling";
 
-    }*/
+      if (schtat > 15)
+        text += "\nVery "+ kek;
+      if (schtat < 5)
+        text += "\nNot at all " + kek;
+    }
     return text;
   },
 
@@ -281,13 +309,17 @@ MonsterCreator.prototype = {
   scaleup: function() {
     var x = this.lastDragged.scale.x;
     var y = this.lastDragged.scale.y;
-    game.add.tween(this.lastDragged.scale).to({x:x+0.1, y:y+0.1}, 100).start();
+    var negX = (x<0)?-1:1;
+    var negY = (y<0)?-1:1;
+    game.add.tween(this.lastDragged.scale).to({x:x+(0.1*negX), y:y+(0.1*negY)}, 100).start();
   },
 
   scaledown: function() {
     var x = this.lastDragged.scale.x;
     var y = this.lastDragged.scale.y;
-    game.add.tween(this.lastDragged.scale).to({x:x-0.1, y:y-0.1}, 100).start();
+    var negX = (x<0)?-1:1;                                             
+    var negY = (y<0)?-1:1;
+    game.add.tween(this.lastDragged.scale).to({x:x-(negX*0.1), y:y-(negY*0.1)}, 100).start();
   },
 
   rot_left: function() {

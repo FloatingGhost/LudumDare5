@@ -69,7 +69,7 @@ IntelScreen.prototype = {
   },
 
   arrangeFolders: function() {
-    var minx = 25;
+    var minx = 0;
     var len = this.folders.children.length;
     for (i in this.folders.children) {
       child = this.folders.children[i];
