@@ -13,6 +13,9 @@ ScareScreen.prototype = {
     game.load.spritesheet("roarword", "res/img/fx/roar.png", 64,64);
     game.load.audio("footstep","res/snd/footstep.wav");
     game.load.audio("creak", "res/snd/DoorCreak.wav");
+    game.load.spritesheet("snore", "res/img/fx/snore.png", 50, 50);
+    game.load.image("grey", "res/img/bg/Grey_Mark.png");
+
   },
 
   create: function() {
@@ -27,25 +30,20 @@ ScareScreen.prototype = {
     this.myLamp1 = game.add.illuminated.lamp(365, 85, {distance: 100});
     this.myLamp2 = game.add.illuminated.lamp(290,350, {distance: 30});
     this.myLamps = [this.myLamp1, this.myLamp2];
-    
     bg.animations.add("twinkle");
-    bg.animations.play("twinkle");
+    bg.animations.play("twinkle", 2);
     this.monster = game.add.group();
     var base = this.monster.create(0, 300, "monster_base");
     for (i in game.monsterParts["parts"]) {
       if (game.monsterParts["parts"][i] != undefined) {
       
       obj = game.monsterParts["parts"][i];
-      console.log(obj); 
       if (obj.name != null) {
-        console.log("Spawning " + obj.name + " at " + obj.x+","+obj.y);
         obj.x += base.x;
         obj.y += base.y;
         console.log(obj);
         var wew = this.monster.add(obj);
-        console.log("Adding animations...");
         wew.rotation = obj.rotation;  
-        console.log("Added!"); 
     }
     }
    }
@@ -55,9 +53,9 @@ ScareScreen.prototype = {
     game.add.sprite(280, 370, "bed");
     this.child = game.add.sprite(280, 310, "sleeping_child");
     this.child.animations.add("scare");
-    this.style = { font: "16px Arial", fill: "#000044", align: "center" };
-    this.faliure = { font: "16px Arial", fill: "#ff0044", align:"center"};
-    this.success = { font: "16px Arial", fill: "00ff44", align:"center"};
+    this.style = { font: "16px Sans", fill: "#000044", align: "center" };
+    this.faliure = { font: "16px Sans", fill: "#ff0044", align:"center"};
+    this.success = { font: "16px Sans", fill: "00ff44", align:"center"};
     game.add.text(0, 0, "Scaring "+game.child["name"] +"\nTarget:"+game.target,this.style);
     //Get monster moving towards child
   
@@ -71,6 +69,12 @@ ScareScreen.prototype = {
   tween.start();
   
   this.myMask = game.add.illuminated.darkMask(this.myLamps, "#120b0b");     
+  
+  this.snore = game.add.sprite(330, 320, "snore");
+  this.snore.animations.add("snore");
+  this.snore.play("snore",5, true);
+  this.grey = game.add.sprite(0,0,"grey");
+  this.grey.alpha = 0;
   },
 
   step: function(sound) {
@@ -80,43 +84,71 @@ ScareScreen.prototype = {
 
   scareChild: function() {
     this.notscared = false;
-    var x =game.add.sprite(this.monster.x, this.monster.y+90, "roarword");
-    x.animations.add("wew");
-    x.animations.play("wew", 8);
-    var x =game.add.sprite(this.monster.x+140, this.monster.y+90, "roarword");
+    this.roary = game.add.sprite(this.monster.x, this.monster.y+90, "roarword");
+    this.roary.animations.add("wew");
+    this.roary.animations.play("wew", 8);
+    this.roar1 =game.add.sprite(this.monster.x+140, this.monster.y+90, "roarword");
     this.myMask.kill();  
-    x.animations.add("wew");
-    x.rotation += 3.14/2
-    x.animations.play("wew", 8);
+    this.roar1.animations.add("wew");
+    this.roar1.rotation += 3.14/2
+    this.roar1.animations.play("wew", 8);
     this.roar.play();
     console.log("argh!");
-    y = 50;
+    this.snore.alpha = 0;
     var total = {};
     var sumtotal = 0;
     for (i in stat_names) {
       i = stat_names[i];
       total[i] = game.monsterParts.stats[i]*game.child.modifiers[i];
       sumtotal += total[i];
-      game.add.text(0,y,i + ": " + game.monsterParts.stats[i],this.style);
-      game.add.text(0,y+17, "Multiplier "+game.child.modifiers[i]+"="+total[i],this.style);
-      y+=17*2; 
     }
-    var s, ss;
-    if (sumtotal >= game.target){
-      s = this.success;
-      ss="Success!";
-      this.child.animations.play("scare");
-    } else {
-      s = this.faliure
-      ss="Faliure :(";
-    };
-    game.add.text(0, y, "Total: "+sumtotal+"(/"+game.target+")", s);
-    game.add.text(0, y+17, "Result: "+ss, s);
-    
+    game.score = sumtotal;
+    setTimeout(function(that){that.finishScare();}, 1000, this); 
   },
 
-  update: function() {
+  finishScare: function() {
+    console.log("Finishing up...");
+    this.roary.alpha = 0;
+    this.roar1.alpha = 0;
+    this.fadein = game.add.tween(this.grey).to({alpha:0.7}, 500);
+    this.fadein.onComplete.add(this.showscore, this);
+    this.fadein.start();
   },
+
+  statScore: function(name, stat, mod,x,y,i) {
+    var whitetext = { font: "30px Sans", fill: "#ffffff", align: "center"};
+    var tot = stat*mod;
+    console.log(stat);
+    var o = game.add.text(0,y,name.toUpperCase()+": "+stat + " X"+mod+" = "+ tot, whitetext);
+    o.alpha = 0;
+    var y = game.add.tween(o).to({alpha:1}, 1000);
+    setTimeout(function(a){a.start();}, 300*i,y);
+  },
+
+  showscore: function() {
+    var whitetext = { font: "65px Sans", fill: "#ffffff", align: "center",alpha:0 }
+    
+    var score = game.score;
+    var target = game.target;
+    var textobj = game.add.text(game.world.centerX-150, 0, "RESULTS", whitetext);
+    textobj.alpha = 0;
+    game.add.tween(textobj).to({alpha:1}, 1000).start();
+    var x = game.world.centerX;
+    var y = 80;
+    for (i in stat_names) {
+      var o = stat_names[i];
+      this.statScore(stat_names[i], game.monsterParts.stats[o], game.child.modifiers[o],x,y,i);
+      y += 40;
+    }
+    if (score > target) {
+      var textobj = game.add.text(x, y, "SUCCESS!", whitetext);
+      textobj.alpha = 0;
+      game.add.tween(textobj).to({alpha:1}, 1000+(500*(i+1))).start();  
+    }
+  },
+ 
+   update: function() {
+   },
 
   
 };

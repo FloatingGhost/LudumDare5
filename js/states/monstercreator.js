@@ -50,14 +50,17 @@ MonsterCreator.prototype = {
     this.spawnSound = game.add.audio("spawn");
     this.lastDragged = null;
     game.add.button(game.world.centerX-50, 430, "scare_button", this.saveMonster, this,2,1,0);
-    this.buttons = game.add.group();
+    this.spawnSprites = game.add.group();
     this.showingLegs=false;
     this.showingArms=false;
     this.showingEyes=false;
     this.showingMouths=false;
-    var x = 100;
+    this.spawnSprites = game.add.group();
+    var kekkles = 0;
     for (i in monster_data) {
       var cat = i;
+      
+      var x = 100 + (64*kekkles);
       i = monster_data[i];
       console.log("LOADING "+cat);       
       var y = 10;
@@ -75,12 +78,14 @@ MonsterCreator.prototype = {
           game.add.button(x,y,"armbutton", this.showArms, this, 2, 1, 0);
           break;
         }
-        y += 32; 
-      
+        y += 100; 
+        kekkles += 1;
       for (var j = 0; j < i.length; j++) {
         obj = i[j];
         //var back = game.add.sprite(x,y+10,"backing");
-        var p = game.add.button(x,y,obj["name"], this.spawn, this, 2, 1, 0);
+        var p = this.spawnSprites.create(x,y,obj["name"]);
+        p.inputEnabled = true;
+        p.events.onInputDown.add(this.spawn, this);
         //p.backing = back;
         //back.alpha = 0;
         
@@ -89,27 +94,27 @@ MonsterCreator.prototype = {
         p.width=32;
         p.height=32;
         p.alpha=0;        
-        y += 64;
+        x += 64;
         /*new Phasetips(game, {
           targetObject: p,
           context: this.getDesc(p.magicmushrooms),
           strokeColor: 0xff0000
         });*/  
-        this.buttons.add(p);
       }
       x += 64;
     }
   },
 
   showLegs: function(obj) {
-    console.log("LEGS");
-    for (i in this.buttons.children) {
-      var o = this.buttons.children[i];
-      console.log(o);   
+    this.clearall(this.showingLegs);
+    for (i in this.spawnSprites.children) {
+      var o = this.spawnSprites.children[i];
       if (o.magicmushrooms.cat == "legs") {
         //o.backing.alpha = 1;
         o.alpha = (this.showingLegs)?0:1;
+        o.input.priorityID = (this.showingLegs)?1:100
         o.z = 0;
+
         game.world.bringToTop(o);
 
       }
@@ -118,15 +123,68 @@ MonsterCreator.prototype = {
   },
 
   showArms: function(obj) {
+    this.clearall(this.showingArms);
+    for (i in this.spawnSprites.children) {
+      var o = this.spawnSprites.children[i];
+      if (o.magicmushrooms.cat == "arms") {
+        //o.backing.alpha = 1;
+        o.alpha = (this.showingArms)?0:1;
+        o.z = 0;
+        o.input.priorityID = (this.showingArms)?1:100
+        game.world.bringToTop(o);
+
+      }
+    }
+    this.showingArms=!this.showingArms;
 
   },
 
   showEyes: function(obj) {
+    this.clearall(this.showingEyes);
+    for (i in this.spawnSprites.children) {
+      var o = this.spawnSprites.children[i];
+      if (o.magicmushrooms.cat == "eyes") {
+        //o.backing.alpha = 1;
+        o.alpha = (this.showingEyes)?0:1;
+        o.input.priorityID = (this.showingEyes)?1:100;
+        o.z = 0;
+        game.world.bringToTop(o);
+      }
+    }
+    this.showingEyes =!this.showingEyes;
 
   },
 
   showMouths: function(obj) {
+    this.clearall(this.showingMouths);
+    for (i in this.spawnSprites.children) {
+      var o = this.spawnSprites.children[i];
+      if (o.magicmushrooms.cat == "mouths") {
+        //o.backing.alpha = 1;
+        o.alpha = (this.showingMouths)?0:1;
+        o.input.priorityID = (this.showingMouths)?1:100;
+        o.z = 0;
+        game.world.bringToTop(o);
 
+      }
+    }
+    this.showingMouths =!this.showingMouths;
+
+  },
+
+  clearall: function(me) {
+    if (!me) {
+      this.showingArms = false;
+      this.showingEyes = false;
+      this.showingLegs = false;
+      this.showingMouths = false;
+      for (i in this.spawnSprites.children) {
+        var o = this.spawnSprites.children[i];
+        o.alpha = 0;
+
+      }
+    
+    }
   },
 
   getDesc: function(obj) {
@@ -308,12 +366,14 @@ MonsterCreator.prototype = {
       p.canDelete = true;
     }
     p.anchor = {x:0.5, y:0.5};
+    p.input.priorityID = 1000;
     return p
 
   },
 
 
   update: function() {
+    if (false) {
     game.debug.text("Monster values: ", 0, 50);
     y = 70;
     for (i in stat_names) {
@@ -321,6 +381,7 @@ MonsterCreator.prototype = {
       game.debug.text(i+": "+this.getStat(i), 0, y);
       y += 15;
     };
+    }
   },
 
 
