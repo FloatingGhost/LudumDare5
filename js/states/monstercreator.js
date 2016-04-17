@@ -14,6 +14,11 @@ MonsterCreator.prototype = {
     game.load.spritesheet("lightning", "res/img/fx/Lightning.png",60,170);
     game.load.image("backing", "res/img/buttons/backing.png");  
     game.load.audio("spawn", "res/snd/item_spawn.wav");
+    game.load.audio("bgmusic", "res/snd/bgsound.wav");
+    game.load.image("armbutton", "res/img/buttons/armbutton.png");
+    game.load.image("legbutton", "res/img/buttons/legbutton.png");
+    game.load.image("eyebutton", "res/img/buttons/eyebutton.png");
+    game.load.image("mouthbutton", "res/img/buttons/mouthbutton.png");
     for (i in monster_data) {
       console.log("Loading sprites for " + i); 
       i = monster_data[i];
@@ -27,6 +32,7 @@ MonsterCreator.prototype = {
   },
   
   setupDisplay: function() {
+    
     //Setup visuals
     console.log("Entering monster creator...");
     var bg = game.add.sprite(0,0,"creator");
@@ -44,25 +50,83 @@ MonsterCreator.prototype = {
     this.spawnSound = game.add.audio("spawn");
     this.lastDragged = null;
     game.add.button(game.world.centerX-50, 430, "scare_button", this.saveMonster, this,2,1,0);
+    this.buttons = game.add.group();
+    this.showingLegs=false;
+    this.showingArms=false;
+    this.showingEyes=false;
+    this.showingMouths=false;
     var x = 100;
-    var y = 10;
     for (i in monster_data) {
+      var cat = i;
       i = monster_data[i];
+      console.log("LOADING "+cat);       
+      var y = 10;
+      switch(cat) {
+        case "eyes":
+          game.add.button(x,y,"eyebutton", this.showEyes, this, 2, 1, 0);
+          break;
+        case "mouths":
+          game.add.button(x,y,"mouthbutton", this.showMouths, this, 2, 1, 0);
+          break;
+        case "legs":
+          game.add.button(x,y,"legbutton", this.showLegs, this, 2, 1, 0);
+          break;
+        case "arms":
+          game.add.button(x,y,"armbutton", this.showArms, this, 2, 1, 0);
+          break;
+        }
+        y += 32; 
+      
       for (var j = 0; j < i.length; j++) {
         obj = i[j];
-        game.add.sprite(x-4,y-4,"backing");
+        //var back = game.add.sprite(x,y+10,"backing");
         var p = game.add.button(x,y,obj["name"], this.spawn, this, 2, 1, 0);
+        //p.backing = back;
+        //back.alpha = 0;
+        
         p.magicmushrooms = obj;
+        p.magicmushrooms.cat = cat;
         p.width=32;
         p.height=32;
-        x += 50;
-        new Phasetips(game, {
+        p.alpha=0;        
+        y += 64;
+        /*new Phasetips(game, {
           targetObject: p,
           context: this.getDesc(p.magicmushrooms),
           strokeColor: 0xff0000
-        });  
+        });*/  
+        this.buttons.add(p);
+      }
+      x += 64;
+    }
+  },
+
+  showLegs: function(obj) {
+    console.log("LEGS");
+    for (i in this.buttons.children) {
+      var o = this.buttons.children[i];
+      console.log(o);   
+      if (o.magicmushrooms.cat == "legs") {
+        //o.backing.alpha = 1;
+        o.alpha = (this.showingLegs)?0:1;
+        o.z = 0;
+        game.world.bringToTop(o);
+
       }
     }
+    this.showingLegs=!this.showingLegs;
+  },
+
+  showArms: function(obj) {
+
+  },
+
+  showEyes: function(obj) {
+
+  },
+
+  showMouths: function(obj) {
+
   },
 
   getDesc: function(obj) {
@@ -86,10 +150,12 @@ MonsterCreator.prototype = {
   },
 
   spawn: function(obj) {
+    if (obj.alpha == 1) {
     console.log(obj);
     this.lightning.alpha = 1;
     this.lightning.animations.play("pew", 20);
     this.mehmetmyson = obj;
+    }
   },
 
   actuallySpawnThisTime: function() {
@@ -101,7 +167,8 @@ MonsterCreator.prototype = {
 
   create: function() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    
+    this.music = game.add.audio("bgmusic");
+    this.music.loopFull();
     this.setupDisplay();
     //Setup controls
     var layerup = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
@@ -200,8 +267,10 @@ MonsterCreator.prototype = {
     this.parts.removeAll();
     console.log("PARTS: ")
     console.log(game.monsterParts);
+    this.music.stop();
     game.state.start("ScareScreen");
     
+
   },
 
   getUsed: function() {
@@ -227,7 +296,7 @@ MonsterCreator.prototype = {
     p = grp.create(x,y,sprite);
     p.inputEnabled = true;
     p.input.enableDrag(true);
-    p.events.onDragStop.add(this.assignLastDragged, this);
+    p.events.onDragStart.add(this.assignLastDragged, this);
     p.events.onDragStart.add(this.playanim, this);
     game.physics.arcade.enable(p);
     p.stats = stats;

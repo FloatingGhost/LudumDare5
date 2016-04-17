@@ -11,9 +11,12 @@ IntelScreen.prototype = {
     game.load.image("grey", "res/img/bg/Grey_Mark.png");
     game.load.audio("fdrup", "res/snd/folder-up.ogg");
     game.load.audio("fdrdwn", "res/snd/folder-down.ogg");
+    game.load.audio("bgnoise", "res/snd/IntelGathering.wav");
   },
 
   create: function() {
+    this.theme = game.add.audio("bgnoise");
+    this.theme.loopFull();
     this.fdrup = game.add.audio("fdrup");
     this.fdrdwn = game.add.audio("fdrdwn");
     var memes = game.add.sprite(0,0,"desk");
@@ -76,6 +79,7 @@ IntelScreen.prototype = {
 
   scare: function() {
     game.target = 100;
+    this.theme.stop();
     game.state.start("MonsterCreator");
   },
 

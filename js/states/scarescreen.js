@@ -5,18 +5,33 @@ ScareScreen.prototype = {
   },
 
   preload: function() {
-    game.load.image("scare_bg", "res/img/bg/Scare_BG.png");
+    game.load.spritesheet("scare_bg", "res/img/bg/Bedroom.png",640,480);
     game.load.image("monster_base", "res/img/monsterparts/Monster_Base.png");
-    game.load.image("sleeping_child", "res/img/Sleeping-child.png");
+    game.load.spritesheet("sleeping_child", "res/img/Sleeping-child.png",150,100);
     game.load.audio("roar", "res/snd/roar.wav");
+    game.load.image("bed", "res/img/bg/bed.png");
     game.load.spritesheet("roarword", "res/img/fx/roar.png", 64,64);
+    game.load.audio("footstep","res/snd/footstep.wav");
+    game.load.audio("creak", "res/snd/DoorCreak.wav");
   },
 
   create: function() {
-    this.roar = game.add.audio("roar");
-    game.add.sprite(0,0,"scare_bg");
+    this.notscared = true;
+    game.add.audio("creak").play();
+    
+    game.plugins.add(Phaser.Plugin.PhaserIlluminated);
+    var bg = game.add.sprite(0,0,"scare_bg");
+    this.footstep = game.add.audio("footstep");
+    this.footstep.onStop.add(this.step, this);
+    this.step();
+    this.myLamp1 = game.add.illuminated.lamp(365, 85, {distance: 100});
+    this.myLamp2 = game.add.illuminated.lamp(290,350, {distance: 30});
+    this.myLamps = [this.myLamp1, this.myLamp2];
+    
+    bg.animations.add("twinkle");
+    bg.animations.play("twinkle");
     this.monster = game.add.group();
-    var base = this.monster.create(0, 72, "monster_base");
+    var base = this.monster.create(0, 300, "monster_base");
     for (i in game.monsterParts["parts"]) {
       if (game.monsterParts["parts"][i] != undefined) {
       
@@ -36,32 +51,40 @@ ScareScreen.prototype = {
    }
     this.monster.anchor = {x:0.5, y:0.5};
     this.monster.scale = {x:0.5, y:0.5};
-    
-    var child = game.add.sprite(230, 330, "sleeping_child");
-    child.scale.x = 2;  
-    child.scale.y = 2;
+    this.monster.y = 160; 
+    game.add.sprite(280, 370, "bed");
+    this.child = game.add.sprite(280, 310, "sleeping_child");
+    this.child.animations.add("scare");
     this.style = { font: "16px Arial", fill: "#000044", align: "center" };
     this.faliure = { font: "16px Arial", fill: "#ff0044", align:"center"};
     this.success = { font: "16px Arial", fill: "00ff44", align:"center"};
     game.add.text(0, 0, "Scaring "+game.child["name"] +"\nTarget:"+game.target,this.style);
     //Get monster moving towards child
-    var path = [null,{"type":2,"closed":false,"x":[0,72,169,253,355,267],"y":[76,159,55,156,191,272]},{"type":0,"closed":false,"x":[0,128,256,384,512,640],"y":[279,424,393,269,242,308]},{"type":0,"closed":false,"x":[0,128,256,384,512,640],"y":[405,178,109,352,222,259]},{"type":0,"closed":false,"x":[0,128,256,384,512,640],"y":[95,165,402,260,279,65]},{"type":0,"closed":false,"x":[0,128,256,384,512,640],"y":[91,427,171,352,225,54]},{"type":0,"closed":false,"x":[0,128,256,384,512,640],"y":[325,327,174,48,37,98]},{"type":0,"closed":false,"x":[0,128,256,384,512,640],"y":[36,219,415,364,284,427]},{"type":0,"closed":false,"x":[0,128,256,384,512,640],"y":[262,227,415,91,70,391]}];
   
-  var tween = game.add.tween(this.monster).to({x: path[1]["x"],
-                                                y: path[1]["y"]}, 
-                                          5000).interpolation(  
-                                              function(v, k){    
-                      return Phaser.Math.catmullRomInterpolation(v, k);});
+  this.roar = game.add.audio("roar");
+  var tween = game.add.tween(this.monster).to({x: 250,
+                                                y: 160}, 
+                                          5000+ (5000*Math.random()));
+  var secondTween = game.add.tween(this.monster).to({y:120}, 200);
+  tween.chain(secondTween);
   tween.onComplete.add(this.scareChild, this);
   tween.start();
+  
+  this.myMask = game.add.illuminated.darkMask(this.myLamps, "#120b0b");     
+  },
+
+  step: function(sound) {
+    if (this.notscared)
+      setTimeout(function(that) {that.footstep.play();}, 750, this);
   },
 
   scareChild: function() {
-    var x =game.add.sprite(this.monster.x, this.monster.y, "roarword");
+    this.notscared = false;
+    var x =game.add.sprite(this.monster.x, this.monster.y+90, "roarword");
     x.animations.add("wew");
     x.animations.play("wew", 8);
-    var x =game.add.sprite(this.monster.x+140, this.monster.y, "roarword");
-    
+    var x =game.add.sprite(this.monster.x+140, this.monster.y+90, "roarword");
+    this.myMask.kill();  
     x.animations.add("wew");
     x.rotation += 3.14/2
     x.animations.play("wew", 8);
@@ -82,6 +105,7 @@ ScareScreen.prototype = {
     if (sumtotal >= game.target){
       s = this.success;
       ss="Success!";
+      this.child.animations.play("scare");
     } else {
       s = this.faliure
       ss="Faliure :(";
@@ -92,7 +116,6 @@ ScareScreen.prototype = {
   },
 
   update: function() {
-  
   },
 
   
