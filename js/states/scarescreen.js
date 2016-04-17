@@ -102,6 +102,7 @@ ScareScreen.prototype = {
       total[i] = game.monsterParts.stats[i]*game.child.modifiers[i];
       sumtotal += total[i];
     }
+    
     game.score = sumtotal;
     setTimeout(function(that){that.finishScare();}, 1000, this); 
   },
@@ -140,7 +141,9 @@ ScareScreen.prototype = {
       this.statScore(stat_names[i], game.monsterParts.stats[o], game.child.modifiers[o],x,y,i);
       y += 30;
     }
-    var s = "Score: "+score+"\n"+"Target was: "+target+"\n"+((target>score)?"BETTER LUCK NEXT TIME...":"SUCCESS!");
+    console.log(game.cost);
+    score -= game.cost;
+    var s = "Score: "+game.score+" - " + game.cost + " (monster cost) = "+score+"\n"+"Target was: "+target+"\n"+((target>score)?"BETTER LUCK NEXT TIME...":"SUCCESS!");
     var textobj = game.add.text(0, y, s, {font:"30px Sans", fill:"#ffffff"});
     textobj.alpha = 0;
     game.add.tween(textobj).to({alpha:1}, 1000).start(); 

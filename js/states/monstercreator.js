@@ -27,6 +27,7 @@ MonsterCreator.prototype = {
         console.log("Loading sprite " + obj["name"]);
         game.load.spritesheet(obj["name"], "res/img/monsterparts/"+obj["img"], 
                               obj["size"]["x"], obj["size"]["y"]);
+        obj.cost=obj["cost"];
       }                      
     }
   },
@@ -56,6 +57,7 @@ MonsterCreator.prototype = {
     this.showingEyes=false;
     this.showingMouths=false;
     this.spawnSprites = game.add.group();
+    
     var kekkles = 0;
     for (i in monster_data) {
       var cat = i;
@@ -86,11 +88,13 @@ MonsterCreator.prototype = {
         var p = this.spawnSprites.create(x,y,obj["name"]);
         p.inputEnabled = true;
         p.events.onInputDown.add(this.spawn, this);
+        p.cost = obj["cost"];
         //p.backing = back;
         //back.alpha = 0;
         
         p.magicmushrooms = obj;
         p.magicmushrooms.cat = cat;
+        p.magicmushrooms.cost = obj["cost"];
         p.width=32;
         p.height=32;
         p.alpha=0;        
@@ -103,6 +107,19 @@ MonsterCreator.prototype = {
       }
       x += 64;
     }
+    game.add.text(450, 0, "Target: "+game.target+" Scare Points", {font:"15px Sans", fill:"#ffffff"});
+    this.curcost = game.add.text(450, 30, "Current Cost: "+this.getCost(), {font:"15px Sans", fill:"#ffffff"});
+  },
+
+  getCost: function() {
+    var u = this.getUsed();
+    var s = 0;
+    for (i in u) {
+      var o = u[i];
+      console.log(o);
+      s += o.cost;
+    }
+    return s;
   },
 
   showLegs: function(obj) {
@@ -181,7 +198,7 @@ MonsterCreator.prototype = {
       for (i in this.spawnSprites.children) {
         var o = this.spawnSprites.children[i];
         o.alpha = 0;
-
+        o.input.priorityID = 1;
       }
     
     }
@@ -220,7 +237,7 @@ MonsterCreator.prototype = {
     var obj = this.mehmetmyson;
     console.log("Spawning "+obj.start);
     this.spawnSound.play();
-    this.createpart(500, 430, obj["key"], this.parts, obj.magicmushrooms["stats"]);
+    this.createpart(500, 430, obj["key"], obj["cost"], this.parts, obj.magicmushrooms["stats"]);
   },
 
   create: function() {
@@ -252,39 +269,45 @@ MonsterCreator.prototype = {
   },
 
   fliphoriz: function() {
-    this.lastDragged.scale.x *= -1;
+    var c = this.lastDragged.scale.x;
+    game.add.tween(this.lastDragged.scale).to({x: c*-1}, 100).start();;
   },
 
   flipverti: function() {
-    this.lastDragged.scale.y *= -1;
-
+    var c = this.lastDragged.scale.y;
+    game.add.tween(this.lastDragged.scale).to({y: c*-1}, 100).start();;
   },
 
   scaleup: function() {
-    this.lastDragged.scale.x += 0.1;
-    this.lastDragged.scale.y += 0.1;
+    var x = this.lastDragged.scale.x;
+    var y = this.lastDragged.scale.y;
+    game.add.tween(this.lastDragged.scale).to({x:x+0.1, y:y+0.1}, 100).start();
   },
 
   scaledown: function() {
-    this.lastDragged.scale.x -= 0.1;
-    this.lastDragged.scale.y -= 0.1;
+    var x = this.lastDragged.scale.x;
+    var y = this.lastDragged.scale.y;
+    game.add.tween(this.lastDragged.scale).to({x:x-0.1, y:y-0.1}, 100).start();
   },
 
   rot_left: function() {
-    this.lastDragged.rotation -= 0.2;
+    var r = this.lastDragged.rotation;
+    game.add.tween(this.lastDragged).to({rotation:r-0.2}, 100).start();
   },
 
   rot_right: function() {
-    this.lastDragged.rotation += 0.2;
+    var r = this.lastDragged.rotation;
+    game.add.tween(this.lastDragged).to({rotation:r+0.2}, 100).start();
   },
 
   clone: function() {
     var obj = this.lastDragged;
-    this.createpart(obj.x, obj.y-16, obj.name, this.parts, obj.stats); 
+    this.createpart(obj.x, obj.y-16, obj.name, obj.cost, this.parts, obj.stats); 
   },
 
   del: function() {
-    this.lastDragged.kill(); 
+    this.lastDragged.kill();
+    this.calcCost();
   },
 
   getStat: function(key) {
@@ -322,6 +345,8 @@ MonsterCreator.prototype = {
     if (game.monsterParts.length == 1) {
       game.monsterParts = [game.monsterParts, null];
     }
+    
+    game.cost = this.getCost();
     this.parts.removeAll();
     console.log("PARTS: ")
     console.log(game.monsterParts);
@@ -350,13 +375,21 @@ MonsterCreator.prototype = {
      sprite.animations.play("anim", 5, true);
   },
 
-  createpart: function(x, y, sprite, grp, stats, canDelete) {
+  calcCost: function() {
+    console.log(this.getCost());
+    this.curcost.text = "Current Cost: " + this.getCost();
+  },
+
+  createpart: function(x, y, sprite, cost, grp, stats, canDelete) {
+    console.log("Setting cost to "+cost)
     p = grp.create(x,y,sprite);
     p.inputEnabled = true;
     p.input.enableDrag(true);
     p.events.onDragStart.add(this.assignLastDragged, this);
     p.events.onDragStart.add(this.playanim, this);
+    p.events.onDragStop.add(this.calcCost, this);
     game.physics.arcade.enable(p);
+    p.cost = cost;
     p.stats = stats;
     p.name = sprite;
     p.animations.add("anim");

@@ -6,6 +6,7 @@ var monster_data = {
                       name: "RedEye",
                       size: {x: 16, y:16},
                       desc: "The eyes that have seen hell",
+                      cost: 10,
                       img: "eyes/RedEye.png",
                       stats: {
                         crazed: 30,
@@ -19,6 +20,7 @@ var monster_data = {
                     },
                     { name: "Reptile Eyes",
                       size: {x: 16, y:16},
+                      cost: 15,
                       desc: "Very snake-like",
                       img: "eyes/ReptileEyes.png",
                       stats: {
@@ -32,6 +34,7 @@ var monster_data = {
                       },
                     },
                     { name: "Void Eyes",
+                      cost: 12,
                       size: {x: 16, y:16},
                       desc: "Stare into the endless void",
                       img: "eyes/VoidEye.png",
@@ -52,6 +55,7 @@ var monster_data = {
                         name: "Smiling Mouth",
                         desc: "Demonic laughter...",
                         size: {x:32, y:32},
+                        cost: 25,
                         img: "mouths/Smiling_Mouth.png",
                         stats: {
                           crazed: 50,
@@ -66,6 +70,7 @@ var monster_data = {
                       { name: "Spinning Mouth",
                         desc: "The blender of souls",
                         size: {x:32, y:32},
+                        cost: 75,
                         img: "mouths/Spinning_Mouth.png",
                         stats: {
                           crazed: 100,
@@ -81,6 +86,7 @@ var monster_data = {
                         size: {x:32, y:32},
                         desc: "Fall into the void...",
                         img: "mouths/Void_Mouth.png",
+                        cost: 50,
                         stats: {
                           crazed: 0,
                           slimy: 0,
@@ -97,6 +103,7 @@ var monster_data = {
                       name: "Hairy Leg",
                       desc: "Hairy as a hobbit",
                       size: {x:64, y:64},
+                      cost: 15,
                       img: "limbs/Green-leg.png",
                       stats: {
                         crazed: 10,
